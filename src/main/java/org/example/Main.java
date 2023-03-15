@@ -1,45 +1,35 @@
 package org.example;
 
-import com.taskadapter.redmineapi.Params;
 import com.taskadapter.redmineapi.RedmineException;
 import com.taskadapter.redmineapi.RedmineManager;
 import com.taskadapter.redmineapi.RedmineManagerFactory;
-import com.taskadapter.redmineapi.bean.Issue;
-import com.taskadapter.redmineapi.bean.Project;
-import com.taskadapter.redmineapi.internal.ResultsWrapper;
-import org.jetbrains.annotations.NotNull;
+import com.taskadapter.redmineapi.bean.User;
 
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws RedmineException {
-        //final Integer queryId = null;
-
-        Params params = new Params()
-            .add("status_id", "*");
 
         final RedmineManager mgr = RedmineManagerFactory.createWithApiKey("http://localhost:8080/",
             "9af5b8f742ef1fa0427d2d9b764a8d3c870ec11a");
         mgr.setObjectsPerPage(100);
 
-        final List<Project> projects = mgr.getProjectManager().getProjects();
+        new IssuesWorker(mgr);
+
+
+
+       /* final List<Project> projects = mgr.getProjectManager().getProjects();
 
         System.out.println("Select the project whose tasks you want to see");
         for (final Project project : projects) {
             System.out.println(project.getId() + ") " + project.getIdentifier());
         }
         final Scanner scanner = new Scanner(System.in);
+        int project_id = scanner.nextInt();
 
-        params.add("project_key",
-            projects.get(scanner.nextInt() - 1)
-                .getIdentifier());
-        //params.add("query_id", String.valueOf(queryId));
 
-        //final List<Issue> issues = mgr.getIssueManager().getIssues(projectKey, queryId);
-        final ResultsWrapper<Issue> issues = mgr.getIssueManager()
-            .getIssues(params);
 
         final String message = """
             Choose which tasks you want to see
@@ -61,13 +51,13 @@ public class Main {
             System.out.println("Choose which tasks you want to see");
             users_choice = scanner.nextInt();
             switch (users_choice) {
-                case 1 -> outAllTasks(issues.getResults());
-                case 2 -> outHighPriorityTasks(issues.getResults());
-                case 3 -> outRejectTasks(issues.getResults());
-                case 4 -> outInProcessTasks(issues.getResults());
-                case 5 -> outClosedTasks(issues.getResults());
-                case 6 -> outHalfCompletedTasks(issues.getResults());
-                case 7 -> outWithoutSubTasks(issues.getResults());
+                case 1 -> outAllTasksNew(mgr, project_id);
+                case 2 -> outHighPriorityTasksNew(mgr, project_id);
+                case 3 -> outRejectTasksNew(mgr, project_id);
+                case 4 -> outInProcessTasksNew(mgr, project_id);
+                case 5 -> outClosedTasksNew(mgr, project_id);
+                case 6 -> outHalfCompletedTasks(mgr, project_id);
+                case 7 -> outWithoutSubTasks(mgr, project_id);
                 case 10 -> System.out.println(message);
                 case 0 -> System.out.println("Good Bye");
                 default -> System.out.println("Wrong number");
@@ -75,6 +65,7 @@ public class Main {
         } while (users_choice != 0);
     }
 
+    @Deprecated
     public static void outAllTasks(@NotNull List<Issue> issues) {
         System.out.println("All tasks");
         issues.stream()
@@ -87,7 +78,7 @@ public class Main {
                 }
             });
     }
-
+    @Deprecated
     public static void outHighPriorityTasks(@NotNull List<Issue> issues) {
         System.out.println("High priority tasks");
         issues.stream()
@@ -95,7 +86,7 @@ public class Main {
             .filter(issue -> issue.getPriorityText().equals("high"))
             .forEach(System.out::println);
     }
-
+    @Deprecated
     public static void outRejectTasks(@NotNull List<Issue> issues) {
         System.out.println("Reject tasks");
         issues.stream()
@@ -103,7 +94,7 @@ public class Main {
             .filter(issue -> issue.getStatusName().equals("reject"))
             .forEach(System.out::println);
     }
-
+    @Deprecated
     public static void outInProcessTasks(@NotNull List<Issue> issues) {
         System.out.println("In process tasks");
         issues.stream()
@@ -111,7 +102,7 @@ public class Main {
             .filter(issue -> issue.getStatusName().equals("In process"))
             .forEach(System.out::println);
     }
-
+    @Deprecated
     public static void outClosedTasks(@NotNull List<Issue> issues) {
         System.out.println("Closed tasks");
         issues.stream()
@@ -120,19 +111,111 @@ public class Main {
             .forEach(System.out::println);
     }
 
-    public static void outHalfCompletedTasks(@NotNull List<Issue> issues) {
+    public static void outHalfCompletedTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Half completed tasks");
-        issues.stream()
+
+        Params params = new Params()
+            .add("status_id", "*")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
             .sorted(Comparator.comparing(Issue::getId))
             .filter(issue -> issue.getDoneRatio() > 50)
             .forEach(System.out::println);
     }
 
-    public static void outWithoutSubTasks(@NotNull List<Issue> issues) {
+    public static void outWithoutSubTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Without subtasks");
-        issues.stream()
+
+        Params params = new Params()
+            .add("status_id", "*")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
             .sorted(Comparator.comparing(Issue::getId))
             .filter(issue -> issue.getParentId() == null)
             .forEach(System.out::println);
+    }
+
+    public static void outAllTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("All tasks");
+
+        Params params = new Params()
+            .add("status_id", "*")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(issue -> {
+                if (issue.getParentId() == null) {
+                    System.out.println(issue);
+                } else {
+                    System.out.println("\t->" + issue);
+                }
+            });
+    }
+
+    public static void outHighPriorityTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("High priority tasks");
+
+        Params params = new Params()
+            .add("status_id", "*")
+            .add("priority", "high")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(System.out::println);
+    }
+
+    public static void outRejectTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("Reject tasks");
+
+        Params params = new Params()
+            .add("status_name", "reject")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(System.out::println);
+    }
+
+    public static void outInProcessTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("In process tasks");
+
+        Params params = new Params()
+            .add("status_id", "In process")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(System.out::println);
+    }
+
+    public static void outClosedTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("Closed tasks");
+
+        Params params = new Params()
+            .add("status_id", "Closed")
+            .add("project_id", Integer.toString(project_id));
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(System.out::println);
+    }*/
     }
 }
