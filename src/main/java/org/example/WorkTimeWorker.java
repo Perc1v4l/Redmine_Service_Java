@@ -7,9 +7,13 @@ import com.taskadapter.redmineapi.bean.TimeEntry;
 import com.taskadapter.redmineapi.bean.User;
 
 import org.javatuples.Pair;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkTimeWorker {
 
@@ -41,7 +45,7 @@ public class WorkTimeWorker {
     }
 
     public void task1(RedmineManager mgr) throws RedmineException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.dd.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         TimeEntryManager timeEntryManager = mgr.getTimeEntryManager();
 
@@ -79,20 +83,28 @@ public class WorkTimeWorker {
             }
         }
 
-        Set<Map.Entry<Date, Float>> mapset = dateHoursMap.entrySet();
+        Set<Map.Entry<Date, Float>> mapSet = dateHoursMap.entrySet();
+        mapSet = mapSet.stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toCollection(LinkedHashSet::new));
+
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy ");
 
         System.out.println("Рабочие дни и время сотрудника:");
-        mapset.forEach(System.out::println);
+        mapSet.forEach(el -> System.out.println("Дата: " + dateFormat.format(el.getKey())
+            + "\tКол-во часов: " + el.getValue()));
 
-        System.out.println("Дни, в которые сотрудник работал менее 8 часов");
-        for (Date date = startDate; date.equals(endDate); date = DateUtil.addDays(date, 1)) {
+        System.out.println("\nДни, в которые сотрудник работал менее 8 часов");
+        Date date = startDate;
+        endDate = DateUtil.addDays(endDate,1);
+        while(!date.equals(endDate)) {
             if (dateHoursMap.containsKey(date)) {
                 if (dateHoursMap.get(date) < 8) {
-                    System.out.println("Дата: " + date + "\tКол-во часов: " + dateHoursMap.get(date));
+                    System.out.println("Дата: " + dateFormat.format(date)
+                        + "\tКол-во часов: " + dateHoursMap.get(date));
                 }
             } else {
-                System.out.println("Дата: " + date + "\tКол-во часов: " + 0);
+                System.out.println("Дата: " + dateFormat.format(date) + "\tКол-во часов: " + 0);
             }
+            date = DateUtil.addDays(date,1);
         }
     }
 
@@ -111,14 +123,16 @@ public class WorkTimeWorker {
         final Map<String, String> params = new HashMap<>();
 
         System.out.print("Введите месяц: ");
-        int month = scanner.nextInt();
+        int month = scanner.nextInt() - 1;
 
         System.out.print("Введите год: ");
         int year = scanner.nextInt();
 
         final List<User> users = mgr.getUserManager().getUsers();
+
         System.out.println("Выберите сотрудника");
         users.forEach(user -> System.out.println(user.getId() + ") " + user.getFullName()));
+        params.put("user_id", scanner.next());
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, 1);
@@ -129,7 +143,6 @@ public class WorkTimeWorker {
 
         Date endDate = calendar.getTime();
 
-        params.put("user_id", scanner.next());
         params.put("from", startDate.toString());
         params.put("to", endDate.toString());
 
