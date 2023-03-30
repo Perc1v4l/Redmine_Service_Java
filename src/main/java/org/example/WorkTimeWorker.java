@@ -132,6 +132,7 @@ public class WorkTimeWorker {
 
         System.out.println("Выберите сотрудника");
         users.forEach(user -> System.out.println(user.getId() + ") " + user.getFullName()));
+
         params.put("user_id", scanner.next());
 
         Calendar calendar = Calendar.getInstance();
@@ -203,14 +204,16 @@ public class WorkTimeWorker {
         final Map<String, String> params = new HashMap<>();
 
         System.out.print("Введите месяц: ");
-        int month = scanner.nextInt();
+        int month = scanner.nextInt() - 1;
 
         System.out.print("Введите год: ");
         int year = scanner.nextInt();
 
         final List<User> users = mgr.getUserManager().getUsers();
+
         System.out.println("Выберите сотрудника");
         users.forEach(user -> System.out.println(user.getId() + ") " + user.getFullName()));
+        params.put("user_id", scanner.next());
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, 1);
@@ -221,7 +224,7 @@ public class WorkTimeWorker {
 
         Date endDate = calendar.getTime();
 
-        params.put("user_id", scanner.next());
+
         params.put("from", startDate.toString());
         params.put("to", endDate.toString());
 
