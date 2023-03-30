@@ -34,6 +34,7 @@ public class WorkTimeWorker {
             switch (userChoice) {
                 case 1 -> task1(mgr);
                 case 2 -> task2(mgr);
+                case 3 -> task3(mgr);
                 case 0 -> System.out.println("Good Bye");
             }
         } while (userChoice != 0);
@@ -228,7 +229,7 @@ public class WorkTimeWorker {
             if (calendar.get(Calendar.WEEK_OF_MONTH) == weekInMonth) {
                 sumOfHoursInWeek += element.getHours();
             } else {
-                hoursInWeek.add(new Pair(weekInMonth, sumOfHoursInWeek));
+                hoursInWeek.add(new Pair<>(weekInMonth, sumOfHoursInWeek));
                 sumOfHoursInWeek = element.getHours();
                 weekInMonth = calendar.get(Calendar.WEEK_OF_MONTH);
             }
