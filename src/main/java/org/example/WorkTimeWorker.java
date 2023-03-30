@@ -224,7 +224,6 @@ public class WorkTimeWorker {
 
         Date endDate = calendar.getTime();
 
-
         params.put("from", startDate.toString());
         params.put("to", endDate.toString());
 
