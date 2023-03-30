@@ -3,11 +3,8 @@ package org.example;
 import com.taskadapter.redmineapi.RedmineException;
 import com.taskadapter.redmineapi.RedmineManager;
 import com.taskadapter.redmineapi.RedmineManagerFactory;
-import com.taskadapter.redmineapi.bean.User;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws RedmineException {
@@ -16,7 +13,33 @@ public class Main {
             "9af5b8f742ef1fa0427d2d9b764a8d3c870ec11a");
         mgr.setObjectsPerPage(100);
 
-        new IssuesWorker(mgr);
+        System.out.println("""
+                1) Просмотр задач;
+                2) Просмотр трудоёмкости.
+                """);
+        Scanner scanner = new Scanner(System.in);
+        int userChoice;
+
+        do {
+            userChoice = scanner.nextInt();
+            switch (userChoice) {
+                case 1 -> new IssuesWorker(mgr);
+                case 2 -> new WorkTimeWorker(mgr);
+                case 0 -> System.out.println("Good Bye");
+                default -> System.out.println("Wrong number");
+            }
+        } while (userChoice != 0);
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -43,11 +43,11 @@ public class IssuesWorker {
 
         System.out.println(message);
 
-        int users_choice;
+        int userChoice;
         do {
             System.out.println("Choose which tasks you want to see");
-            users_choice = scanner.nextInt();
-            switch (users_choice) {
+            userChoice = scanner.nextInt();
+            switch (userChoice) {
                 case 1 -> outAllTasksNew(mgr, project_id);
                 case 2 -> outHighPriorityTasksNew(mgr, project_id);
                 case 3 -> outRejectTasksNew(mgr, project_id);
@@ -59,7 +59,7 @@ public class IssuesWorker {
                 case 0 -> System.out.println("Good Bye");
                 default -> System.out.println("Wrong number");
             }
-        } while (users_choice != 0);
+        } while (userChoice != 0);
     }
 
     @Deprecated
@@ -119,7 +119,7 @@ public class IssuesWorker {
 
         issues.getResults().stream()
             .sorted(Comparator.comparing(Issue::getId))
-            .filter(issue -> issue.getDoneRatio() > 50)
+            .filter(issue -> issue.getDoneRatio() >= 50)
             .forEach(System.out::println);
     }
 
