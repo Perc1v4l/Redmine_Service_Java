@@ -63,52 +63,7 @@ public class IssuesWorker {
     }
 
     @Deprecated
-    public static void outAllTasks(@NotNull List<Issue> issues) {
-        System.out.println("All tasks");
-        issues.stream()
-            .sorted(Comparator.comparing(Issue::getId))
-            .forEach(issue -> {
-                if (issue.getParentId() == null) {
-                    System.out.println(issue);
-                } else {
-                    System.out.println("\t->" + issue);
-                }
-            });
-    }
-    @Deprecated
-    public static void outHighPriorityTasks(@NotNull List<Issue> issues) {
-        System.out.println("High priority tasks");
-        issues.stream()
-            .sorted(Comparator.comparing(Issue::getId))
-            .filter(issue -> issue.getPriorityText().equals("high"))
-            .forEach(System.out::println);
-    }
-    @Deprecated
-    public static void outRejectTasks(@NotNull List<Issue> issues) {
-        System.out.println("Reject tasks");
-        issues.stream()
-            .sorted(Comparator.comparing(Issue::getId))
-            .filter(issue -> issue.getStatusName().equals("reject"))
-            .forEach(System.out::println);
-    }
-    @Deprecated
-    public static void outInProcessTasks(@NotNull List<Issue> issues) {
-        System.out.println("In process tasks");
-        issues.stream()
-            .sorted(Comparator.comparing(Issue::getId))
-            .filter(issue -> issue.getStatusName().equals("In process"))
-            .forEach(System.out::println);
-    }
-    @Deprecated
-    public static void outClosedTasks(@NotNull List<Issue> issues) {
-        System.out.println("Closed tasks");
-        issues.stream()
-            .sorted(Comparator.comparing(Issue::getId))
-            .filter(issue -> issue.getStatusName().equals("Closed"))
-            .forEach(System.out::println);
-    }
-
-    public static void outHalfCompletedTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outHalfCompletedTasksD(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Half completed tasks");
 
         Params params = new Params()
@@ -122,8 +77,23 @@ public class IssuesWorker {
             .filter(issue -> issue.getDoneRatio() >= 50)
             .forEach(System.out::println);
     }
+    private static void outHalfCompletedTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        System.out.println("Half completed tasks");
 
-    public static void outWithoutSubTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+        Params params = new Params()
+            .add("status_id", "*")
+            .add("project_id", Integer.toString(project_id))
+            .add("from", "50")
+            .add("to", "100");
+
+        ResultsWrapper<Issue> issues = mgr.getIssueManager().getIssues(params);
+
+        issues.getResults().stream()
+            .sorted(Comparator.comparing(Issue::getId))
+            .forEach(System.out::println);
+    }
+
+    private static void outWithoutSubTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Without subtasks");
 
         Params params = new Params()
@@ -138,7 +108,7 @@ public class IssuesWorker {
             .forEach(System.out::println);
     }
 
-    public static void outAllTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outAllTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("All tasks");
 
         Params params = new Params()
@@ -158,7 +128,7 @@ public class IssuesWorker {
             });
     }
 
-    public static void outHighPriorityTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outHighPriorityTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("High priority tasks");
 
         Params params = new Params()
@@ -173,7 +143,7 @@ public class IssuesWorker {
             .forEach(System.out::println);
     }
 
-    public static void outRejectTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outRejectTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Reject tasks");
 
         Params params = new Params()
@@ -187,7 +157,7 @@ public class IssuesWorker {
             .forEach(System.out::println);
     }
 
-    public static void outInProcessTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outInProcessTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("In process tasks");
 
         Params params = new Params()
@@ -201,7 +171,7 @@ public class IssuesWorker {
             .forEach(System.out::println);
     }
 
-    public static void outClosedTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
+    private static void outClosedTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
         System.out.println("Closed tasks");
 
         Params params = new Params()

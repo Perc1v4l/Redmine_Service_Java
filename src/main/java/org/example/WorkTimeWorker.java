@@ -18,8 +18,10 @@ import java.util.stream.Collectors;
 public class WorkTimeWorker {
 
     Scanner scanner = new Scanner(System.in);
+    RedmineManager mgr;
 
     public WorkTimeWorker(RedmineManager mgr) throws RedmineException {
+        this.mgr = mgr;
         console(mgr);
     }
 
@@ -44,7 +46,7 @@ public class WorkTimeWorker {
         } while (userChoice != 0);
     }
 
-    public void task1(RedmineManager mgr) throws RedmineException {
+    private void task1(RedmineManager mgr) throws RedmineException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         TimeEntryManager timeEntryManager = mgr.getTimeEntryManager();
@@ -108,7 +110,7 @@ public class WorkTimeWorker {
         }
     }
 
-    public static class DateUtil {
+    private static class DateUtil {
         public static Date addDays(Date date, int days) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
@@ -117,7 +119,7 @@ public class WorkTimeWorker {
         }
     }
 
-    public void task2(RedmineManager mgr) throws RedmineException {
+    private void task2(RedmineManager mgr) throws RedmineException {
         TimeEntryManager timeEntryManager = mgr.getTimeEntryManager();
 
         final Map<String, String> params = new HashMap<>();
@@ -182,7 +184,7 @@ public class WorkTimeWorker {
         });
     }
 
-    public void task3(RedmineManager mgr) throws RedmineException {
+    private void task3(RedmineManager mgr) throws RedmineException {
         float[] weeks = {
                 0,
                 0, 40, 40, 40,
