@@ -25,8 +25,8 @@ public class Main {
             switch (userChoice) {
                 case 1 -> new IssuesWorker(mgr);
                 case 2 -> new WorkTimeWorker(mgr);
-                case 0 -> System.out.println("Good Bye");
-                default -> System.out.println("Wrong number");
+                case 0 -> System.out.println("До свидания");
+                default -> System.out.println("Неверный ввод");
             }
         } while (userChoice != 0);
     }
