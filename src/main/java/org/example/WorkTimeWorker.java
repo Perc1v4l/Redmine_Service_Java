@@ -35,13 +35,13 @@ public class WorkTimeWorker {
 
         int userChoice;
         do {
-            System.out.println("Choose which tasks you want to see");
+            System.out.println("Выберите задание: ");
             userChoice = scanner.nextInt();
             switch (userChoice) {
                 case 1 -> task1(mgr);
                 case 2 -> task2(mgr);
                 case 3 -> task3(mgr);
-                case 0 -> System.out.println("Good Bye");
+                case 0 -> System.out.println("До свидания");
             }
         } while (userChoice != 0);
     }
