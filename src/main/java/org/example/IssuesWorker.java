@@ -21,7 +21,7 @@ public class IssuesWorker {
     private void console(RedmineManager mgr) throws RedmineException {
         final List<Project> projects = mgr.getProjectManager().getProjects();
 
-        System.out.println("Select the project whose tasks you want to see");
+        System.out.println("Выберите проект: ");
         for (final Project project : projects) {
             System.out.println(project.getId() + ") " + project.getIdentifier());
         }
@@ -29,23 +29,23 @@ public class IssuesWorker {
         int project_id = scanner.nextInt();
 
         final String message = """
-            Choose which tasks you want to see
-            1) All tasks
-            2) High priority
-            3) Reject status
-            4) In process
-            5) Closed
-            6) Progress > 50%
-            7) Without subtasks
-            10) Repeat this message
-            0) Exit
+            Выберите задание
+            1) Вывести все задачи
+            2) Вывести задачи с высоким приотритетом
+            3) Вывести отклонённые задачи
+            4) Вывести задачи в процессе выполнения
+            5) Вывести завершённые задачи
+            6) Вывести задачи выполненные на 50 и более процентов
+            7) Вывести задачи, не учитывая подзадачи
+            10) Повторить собщение
+            0) Выход
             """;
 
         System.out.println(message);
 
         int userChoice;
         do {
-            System.out.println("Choose which tasks you want to see");
+            System.out.println("Выберите задание: ");
             userChoice = scanner.nextInt();
             switch (userChoice) {
                 case 1 -> outAllTasksNew(mgr, project_id);
@@ -56,8 +56,8 @@ public class IssuesWorker {
                 case 6 -> outHalfCompletedTasks(mgr, project_id);
                 case 7 -> outWithoutSubTasks(mgr, project_id);
                 case 10 -> System.out.println(message);
-                case 0 -> System.out.println("Good Bye");
-                default -> System.out.println("Wrong number");
+                case 0 -> System.out.println("До свидания");
+                default -> System.out.println("Невереный ввод");
             }
         } while (userChoice != 0);
     }
@@ -78,7 +78,7 @@ public class IssuesWorker {
             .forEach(System.out::println);
     }
     private static void outHalfCompletedTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("Half completed tasks");
+        System.out.println("Задачи выполненные на 50 и более процентов");
 
         Params params = new Params()
             .add("status_id", "*")
@@ -94,7 +94,7 @@ public class IssuesWorker {
     }
 
     private static void outWithoutSubTasks(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("Without subtasks");
+        System.out.println("Задачи, не учитывая подзадачи");
 
         Params params = new Params()
             .add("status_id", "*")
@@ -109,7 +109,7 @@ public class IssuesWorker {
     }
 
     private static void outAllTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("All tasks");
+        System.out.println("Все задачи");
 
         Params params = new Params()
             .add("status_id", "*")
@@ -129,7 +129,7 @@ public class IssuesWorker {
     }
 
     private static void outHighPriorityTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("High priority tasks");
+        System.out.println("Задачи с высоким приоритетом");
 
         Params params = new Params()
             .add("status_id", "*")
@@ -144,7 +144,7 @@ public class IssuesWorker {
     }
 
     private static void outRejectTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("Reject tasks");
+        System.out.println("Отклонённые задачи");
 
         Params params = new Params()
             .add("status_id", "4")
@@ -158,7 +158,7 @@ public class IssuesWorker {
     }
 
     private static void outInProcessTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("In process tasks");
+        System.out.println("Задачи в процессе выполнения");
 
         Params params = new Params()
             .add("status_id", "2")
@@ -172,7 +172,7 @@ public class IssuesWorker {
     }
 
     private static void outClosedTasksNew(@NotNull RedmineManager mgr, int project_id) throws RedmineException {
-        System.out.println("Closed tasks");
+        System.out.println("Завершённые задачи");
 
         Params params = new Params()
             .add("status_id", "3")
