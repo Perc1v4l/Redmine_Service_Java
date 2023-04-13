@@ -135,8 +135,6 @@ public class WorkTimeWorker {
         System.out.println("Выберите сотрудника");
         users.forEach(user -> System.out.println(user.getId() + ") " + user.getFullName()));
 
-        params.put("user_id", scanner.next());
-
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, 1);
 
@@ -146,10 +144,14 @@ public class WorkTimeWorker {
 
         Date endDate = calendar.getTime();
 
+        int userId = scanner.nextInt();
+
+        params.put("user_id", Integer.toString(userId));
         params.put("from", startDate.toString());
         params.put("to", endDate.toString());
 
         List<TimeEntry> elements = timeEntryManager.getTimeEntries(params).getResults();
+
         elements = elements.stream()
                 .sorted(Comparator.comparing(TimeEntry::getSpentOn))
                 .toList();
@@ -215,7 +217,6 @@ public class WorkTimeWorker {
 
         System.out.println("Выберите сотрудника");
         users.forEach(user -> System.out.println(user.getId() + ") " + user.getFullName()));
-        params.put("user_id", scanner.next());
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, 1);
@@ -226,6 +227,7 @@ public class WorkTimeWorker {
 
         Date endDate = calendar.getTime();
 
+        params.put("user_id", scanner.next());
         params.put("from", startDate.toString());
         params.put("to", endDate.toString());
 
